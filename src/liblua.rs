@@ -1,13 +1,27 @@
+use std::fs::read_to_string;
 use std::io::stdin;
 
-use mlua::{
-    Lua,
-    prelude::LuaError
-};
+use mlua::{prelude::LuaError, Lua};
 
 pub type LuaResult<T> = Result<T, LuaError>;
 
-pub fn new_lua_context() -> LuaResult<Lua> {
+pub fn load_lua_file() -> LuaResult<Lua> {
+    let lua_context = new_lua_context()?;
+
+    let lua_content = match read_to_string("resources/hello_name.lua") {
+        Ok(content) => content,
+        Err(error) => {
+            eprintln!("Lua file couldn't be read, error: {}", error);
+            String::from("function main() \n end")
+        }
+    };
+
+    lua_context.load(&lua_content).exec()?;
+
+    Ok(lua_context)
+}
+
+fn new_lua_context() -> LuaResult<Lua> {
     // Generate LUA context
     let lua_context = Lua::new();
 
@@ -15,7 +29,7 @@ pub fn new_lua_context() -> LuaResult<Lua> {
     let library = lua_context.create_table()?;
     library.set("println", lua_context.create_function(lib_print)?)?;
     library.set("readln", lua_context.create_function(lib_read)?)?;
-    
+
     // Register Rust functions to LUA globals
     lua_context.globals().set("Rust", library)?;
 
@@ -24,7 +38,7 @@ pub fn new_lua_context() -> LuaResult<Lua> {
 }
 
 // Functions passed to LUA context
-fn lib_print(_: &Lua, text: String) -> LuaResult<()>{
+fn lib_print(_: &Lua, text: String) -> LuaResult<()> {
     println!("{text}");
 
     Ok(())
@@ -36,4 +50,4 @@ fn lib_read(_: &Lua, _: ()) -> LuaResult<String> {
     stdin().read_line(&mut input)?;
 
     Ok(input.trim().to_owned())
-} 
+}

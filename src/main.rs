@@ -1,24 +1,10 @@
 mod liblua;
 
-use liblua::{
-    LuaResult,
-    new_lua_context
-};
+use liblua::{load_lua_file, LuaResult};
 
 fn main() -> LuaResult<()> {
-    // Create LUA context
-    let lua_context = new_lua_context()?;
-
-    // Content of LUA (TODO: Move to its own file)
-    lua_context.load(r#"
-        function main()
-            Rust.println("What is your name?")
-
-            local name = Rust.readln()
-
-            Rust.println("Hello "..name.."!")
-        end
-    "#).exec()?;
+    // Get LUA from file
+    let lua_context = load_lua_file()?;
 
     // Call content found in main function of LUA
     lua_context.load(r#"main()"#).exec()?;
