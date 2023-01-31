@@ -1,31 +1,22 @@
-use mlua::{
-    Lua,
-    prelude::LuaError
+mod liblua;
+
+use liblua::{
+    LuaResult,
+    new_lua_context
 };
 
-fn main() -> Result<(), LuaError> {
+fn main() -> LuaResult<()> {
     // Create LUA context
-    let lua_context = Lua::new();
-
-    // Create Rust global functions to pass to LUA (TODO: Move to its own file)
-    let lua_globals = lua_context.globals();
-
-    let rust_lib = lua_context.create_table()?;
-
-    let rust_print = lua_context.create_function(| _, text: String | {
-        println!("{text}");
-
-        Ok(())
-    })?;
-
-    rust_lib.raw_set("println", rust_print)?;
-
-    lua_globals.set("Rust", rust_lib)?;
+    let lua_context = new_lua_context()?;
 
     // Content of LUA (TODO: Move to its own file)
     lua_context.load(r#"
         function main()
-            Rust.println("Hello World!")
+            Rust.println("What is your name?")
+
+            local name = Rust.readln()
+
+            Rust.println("Hello "..name.."!")
         end
     "#).exec()?;
 
