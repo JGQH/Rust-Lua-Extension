@@ -1,3 +1,4 @@
+use rand::{thread_rng as rng, Rng};
 use std::fs::read_to_string;
 use std::io::stdin;
 
@@ -29,6 +30,10 @@ fn new_lua_context() -> LuaResult<Lua> {
     let library = lua_context.create_table()?;
     library.set("println", lua_context.create_function(lib_print)?)?;
     library.set("readln", lua_context.create_function(lib_read)?)?;
+    library.set(
+        "rand_int",
+        lua_context.create_function(lib_rand_int_inclusive)?,
+    )?;
 
     // Register Rust functions to LUA globals
     lua_context.globals().set("Rust", library)?;
@@ -50,4 +55,8 @@ fn lib_read(_: &Lua, _: ()) -> LuaResult<String> {
     stdin().read_line(&mut input)?;
 
     Ok(input.trim().to_owned())
+}
+
+fn lib_rand_int_inclusive(_: &Lua, (min, max): (u8, u8)) -> LuaResult<u8> {
+    Ok(rng().gen_range(min..=max))
 }

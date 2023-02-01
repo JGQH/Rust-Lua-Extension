@@ -6,7 +6,7 @@ function main()
 
         if user_answer == "1" or user_answer == "2" or user_answer == "3" then
             -- Avoid unnecesary logic for victory condition
-            if (1 == math.random(1, 3)) then
+            if (1 == Rust.rand_int(1, 3)) then
                 Rust.println("You win!")
             else
                 Rust.println("You lose!")
