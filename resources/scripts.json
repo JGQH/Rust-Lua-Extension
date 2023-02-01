@@ -1,0 +1,16 @@
+{
+	"scripts": [
+		{
+			"name": "Hello {Name}",
+			"lua": "hello_name.lua"
+		},
+		{
+			"name": "Dice Roll",
+			"lua": "dice_roll.lua"
+		},
+		{
+			"name": "Rock, Paper, Scissors",
+			"lua": "rock_paper_scissors.lua"
+		}
+	]
+}
