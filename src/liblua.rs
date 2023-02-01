@@ -5,10 +5,10 @@ use mlua::{prelude::LuaError, Lua};
 
 pub type LuaResult<T> = Result<T, LuaError>;
 
-pub fn load_lua_file() -> LuaResult<Lua> {
+pub fn load_lua_file(path: &str) -> LuaResult<Lua> {
     let lua_context = new_lua_context()?;
 
-    let lua_content = match read_to_string("resources/hello_name.lua") {
+    let lua_content = match read_to_string(path) {
         Ok(content) => content,
         Err(error) => {
             eprintln!("Lua file couldn't be read, error: {}", error);
