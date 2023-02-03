@@ -6,14 +6,14 @@ use mlua::{prelude::LuaError, Lua};
 
 pub type LuaResult<T> = Result<T, LuaError>;
 
-pub fn load_lua_file(path: &str) -> LuaResult<Lua> {
+pub fn load_lua_file(lua_path: &str) -> LuaResult<Lua> {
     let lua_context = new_lua_context()?;
 
-    let lua_content = match read_to_string(path) {
+    let lua_content = match read_to_string(lua_path) {
         Ok(content) => content,
         Err(error) => {
             eprintln!("Lua file couldn't be read, error: {}", error);
-            String::from("function main() \n end")
+            String::from("function main() \n Rust.println(\"ERROR\") \n end")
         }
     };
 
